@@ -109,17 +109,17 @@ before_install:
   - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" docker-engine
 
 before_script:
-  - docker build --force-rm=true --build-arg MARIADB_VERSION=${MARIADB_VERSION} -t deeky666/mariadb:${ALIAS:-MARIADB_VERSION} .
+  - docker build --force-rm=true --build-arg MARIADB_VERSION=${MARIADB_VERSION} -t deeky666/mariadb:${ALIAS:-$MARIADB_VERSION} .
 
-  - docker run -d -p 3307:3306 --name mariadb deeky666/mariadb:${MARIADB_VERSION}
+  - docker run -d -p 3307:3306 --name mariadb deeky666/mariadb:${ALIAS:-$MARIADB_VERSION}
   - sleep 5
   - status="$(docker inspect -f '{{ .State.Health.Status}}' mariadb)" && [ "$status" = 'healthy' ]
   - echo "status" | mysql -h127.0.0.1 -P 3307 -uroot
   - mysql -h127.0.0.1 -P 3307 -uroot -e "CREATE DATABASE foo; SHOW DATABASES;" | grep foo > /dev/null
 
-  - if [[ ! -z "$TRAVIS_TAG" && ! -z "$LATEST_MINOR" ]]; then docker tag deeky666/mariadb:${MARIADB_VERSION} deeky666/mariadb:${LATEST_MINOR}; fi
-  - if [[ ! -z "$TRAVIS_TAG" && ! -z "$LATEST_MAJOR" ]]; then docker tag deeky666/mariadb:${MARIADB_VERSION} deeky666/mariadb:${LATEST_MAJOR}; fi
-  - if [[ ! -z "$TRAVIS_TAG" && ! -z "$LATEST" ]]; then docker tag deeky666/mariadb:${MARIADB_VERSION} deeky666/mariadb:latest; fi
+  - if [[ ! -z "$TRAVIS_TAG" && ! -z "$LATEST_MINOR" ]]; then docker tag deeky666/mariadb:${ALIAS:-$MARIADB_VERSION} deeky666/mariadb:${LATEST_MINOR}; fi
+  - if [[ ! -z "$TRAVIS_TAG" && ! -z "$LATEST_MAJOR" ]]; then docker tag deeky666/mariadb:${ALIAS:-$MARIADB_VERSION} deeky666/mariadb:${LATEST_MAJOR}; fi
+  - if [[ ! -z "$TRAVIS_TAG" && ! -z "$LATEST" ]]; then docker tag deeky666/mariadb:${ALIAS:-$MARIADB_VERSION} deeky666/mariadb:latest; fi
   - if [ ! -z "$TRAVIS_TAG" ]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"; fi
   - if [ ! -z "$TRAVIS_TAG" ]; then docker push deeky666/mariadb; fi
 
