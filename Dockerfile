@@ -35,6 +35,10 @@ RUN \
     wget \
         -nv \
         -O mariadb.tar.gz \
+        ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-${MARIADB_VERSION}/bintar-hardy-amd64/mariadb-${MARIADB_VERSION}-linux-x86_64.tar.gz || \
+    wget \
+        -nv \
+        -O mariadb.tar.gz \
         ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-${MARIADB_VERSION}/bintar-linux-x86_64/mariadb-${MARIADB_VERSION}-linux-x86_64.tar.gz && \
 
     tar xf mariadb.tar.gz --strip 1 && \
